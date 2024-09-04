@@ -1,0 +1,7 @@
+.card__container {
+    margin: 23px auto 0;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+}
