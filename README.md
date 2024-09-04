@@ -51,4 +51,8 @@ This project is a web-based application that allows cards featuring text and ima
 
 
 Project repo: https://github.com/Olliekse/mesto-project-ff
+![screencapture-127-0-0-1-5500-2024-09-04-20_13_43](https://github.com/user-attachments/assets/9998de61-efa0-40bc-99c2-c6867ba4ffda)
+![screencapture-127-0-0-1-5500-2024-09-04-20_13_17](https://github.com/user-attachments/assets/a1871ae3-e7fd-40c8-bafe-0d48eca2bd32)
+
+
 
