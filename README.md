@@ -54,5 +54,4 @@ Project repo: https://github.com/Olliekse/mesto-project-ff
 
 Screenshots:
 
-![Uploading screencapture-127-0-0-1-5500-2024-09-04-20_13_43-imageonline.co-merged-min.png…]()
-
+![screencapture-127-0-0-1-5500-2024-09-04-20_13_43-imageonline co-merged-min](https://github.com/user-attachments/assets/963c9b8f-7b5d-40a8-9f3a-264e799c5221)
