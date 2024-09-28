@@ -4,18 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Место-Россия</title>
-    <link rel="stylesheet" href="./pages/index.css" />
   </head>
 
   <body class="page">
     <header class="header">
-      <img class="logo" src="./images/logo.svg" alt="логотип" />
+      <img class="logo" src="<%=require('./images/logo.svg')%>" alt="логотип" />
     </header>
     <main class="content">
       <section class="profile">
         <img
           class="profile__photo"
-          src="./images/image.jpg"
+          src="<%=require('./images/image.jpg')%>"
           alt="фото профиля "
         />
         <div class="profile__info">

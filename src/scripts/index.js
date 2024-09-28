@@ -1,3 +1,5 @@
+import '../pages/index.css';
+
 // DOM Elements
 const cardsContainer = document.querySelector(".cards");
 const cardTemplate = document.getElementById("card-template").content;
