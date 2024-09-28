@@ -1,4 +1,5 @@
-import '../pages/index.css';
+import "../pages/index.css";
+import { initialCards } from "./cards.js";
 
 // DOM Elements
 const cardsContainer = document.querySelector(".cards");

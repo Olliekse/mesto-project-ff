@@ -1,52 +1,33 @@
-// Array for creation of six cards upon loading of page
-const yorkImage = new URL(
-  "./images/jeremy-stewardson-FcTv5d5kcPE-unsplash.jpg",
-  import.meta.url
-);
-const leedsImage = new URL(
-  "./images/al-elmes-yZAjIcXxpR0-unsplash.jpg",
-  import.meta.url
-);
-const toursImage = new URL(
-  "./images/jordi-vich-navarro-Ft_dAqZ6qq8-unsplash.jpg",
-  import.meta.url
-);
-const aixImage = new URL(
-  "./images/christian-mackie-PBvFpF3f624-unsplash.jpg",
-  import.meta.url
-);
-const nizhnyImage = new URL(
-  "./images/georgy-trofimov-8wsxtCoyIRs-unsplash.jpg",
-  import.meta.url
-);
-const belgradeImage = new URL(
-  "./images/dimitrije-milenkovic-Wa9gkmHOTf8-unsplash.jpg",
-  import.meta.url
-);
+const yorkImage = require("../images/jeremy-stewardson-FcTv5d5kcPE-unsplash.jpg");
+const leedsImage = require("../images/al-elmes-yZAjIcXxpR0-unsplash.jpg");
+const toursImage = require("../images/jordi-vich-navarro-Ft_dAqZ6qq8-unsplash.jpg");
+const aixImage = require("../images/christian-mackie-PBvFpF3f624-unsplash.jpg");
+const nizhnyImage = require("../images/georgy-trofimov-8wsxtCoyIRs-unsplash.jpg");
+const belgradeImage = require("../images/dimitrije-milenkovic-Wa9gkmHOTf8-unsplash.jpg");
 
-const initialCards = [
+export const initialCards = [
   {
     name: "Йорк",
-    link: "yorkImage",
+    link: yorkImage,
   },
   {
     name: "Лидс",
-    link: "leedsImage",
+    link: leedsImage,
   },
   {
     name: "Тур",
-    link: "toursImage",
+    link: toursImage,
   },
   {
     name: "Экс-ан-Прованс",
-    link: "aixImage",
+    link: aixImage,
   },
   {
     name: "Нижний Новгород",
-    link: "nizhnyImage",
+    link: nizhnyImage,
   },
   {
     name: "Белград",
-    link: "belgradeImage",
+    link: belgradeImage,
   },
 ];
