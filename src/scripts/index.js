@@ -1,41 +1,91 @@
 import "../pages/index.css";
+import { createCard } from "./card.js";
+import { openPopup } from "./modal.js";
+import { closePopup } from "./modal.js";
+import { renderCard } from "./card.js";
+import { deleteCard } from "./card.js";
 import { initialCards } from "./cards.js";
 
-// DOM Elements
-const cardsContainer = document.querySelector(".cards");
-const cardTemplate = document.getElementById("card-template").content;
+const nameInput = document.getElementById("name");
+const jobInput = document.getElementById("job");
+const newName = document.querySelector(".profile__name");
+const newJob = document.querySelector(".profile__job");
+const inputUrl = document.getElementById("pic-link");
+const inputName = document.getElementById("place-name");
+const popupProfile = document.querySelector(".popup_type_profile");
+const popupAdd = document.querySelector(".popup_type_card");
+export const popupPhoto = document.querySelector(".popup_type_photo");
+export const cardTemplate = document.getElementById("card-template").content;
+export const photoText = document.querySelector(".popup__photo-text");
+export const photo = document.querySelector("#photo");
+export const cardsContainer = document.querySelector(".cards");
 
-// Initial setup
 renderInitialCards();
 
-// Render initial cards
 function renderInitialCards() {
   initialCards.forEach((item) => renderCard(createCard(item, deleteCard)));
 }
 
-// Prepend a card to the container
-function renderCard(cardElement) {
-  cardsContainer.prepend(cardElement);
+document
+  .querySelector(".profile__edit-btn-box")
+  .addEventListener("click", () => {
+    const name = newName.textContent;
+    const job = newJob.textContent;
+
+    nameInput.value = name;
+    jobInput.value = job;
+
+    openPopup(popupProfile);
+  });
+
+document.querySelector(".popup__close").addEventListener("click", () => {
+  closePopup(popupProfile);
+});
+
+document.querySelector(".profile__add-btn").addEventListener("click", () => {
+  openPopup(popupAdd);
+});
+
+document.getElementById("popup-close").addEventListener("click", () => {
+  closePopup(popupAdd);
+});
+
+document.getElementById("popup-photo-close").addEventListener("click", () => {
+  closePopup(popupPhoto);
+});
+
+document
+  .querySelector('[name="profile-form"]')
+  .addEventListener("submit", handleProfileFormSubmit);
+
+document
+  .querySelector('[name="add-form"]')
+  .addEventListener("submit", handleAddCardFormSubmit);
+
+function handleProfileFormSubmit(evt) {
+  evt.preventDefault();
+
+  newName.textContent = nameInput.value;
+  newJob.textContent = jobInput.value;
+
+  closePopup(popupProfile);
 }
 
-// Global delete card handler
-function deleteCard(cardElement) {
-  cardElement.remove();
-}
+function handleAddCardFormSubmit(evt) {
+  evt.preventDefault();
 
-// Create a card with the necessary listeners
-function createCard(item, deleteHandler) {
-  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
-  const deleteButton = cardElement.querySelector("#delete-btn");
-  const cardPhoto = cardElement.querySelector(".card__image");
-  const cardText = cardElement.querySelector(".card__text");
+  const url = inputUrl.value;
+  const name = inputName.value;
 
-  cardText.textContent = item.name;
-  cardPhoto.alt = item.name;
-  cardPhoto.src = item.link;
+  const cardInfo = {
+    name: name,
+    link: url,
+  };
 
-  // Attach the passed deleteHandler to the delete button
-  deleteButton.addEventListener("click", () => deleteHandler(cardElement));
+  renderCard(createCard(cardInfo, deleteCard));
 
-  return cardElement;
+  inputUrl.value = "";
+  inputName.value = "";
+
+  closePopup(popupAdd);
 }
