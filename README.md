@@ -49,6 +49,7 @@ This project is a web-based application that allows cards featuring text and ima
 
 ## Usage
 
+How to use: npm run build
 
 Project repo: https://github.com/Olliekse/mesto-project-ff
 
