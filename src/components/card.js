@@ -1,16 +1,15 @@
-import { openPopup } from "./modal.js";
-import { cardTemplate } from "./index.js";
-import { photoText } from "./index.js";
-import { photo } from "./index.js";
-import { cardsContainer } from "./index.js";
-import { popupPhoto } from "./index.js";
-
+import { cardTemplate } from "./constants.js";
+import { cardsContainer } from "./constants.js";
 
 export function deleteCard(cardElement) {
   cardElement.remove();
 }
 
-export function createCard(item, deleteHandler) {
+export function heartToggler(heartIcon) {
+  heartIcon.classList.toggle("card__heart_active");
+}
+
+export function createCard(item, deleteHandler, heartHandler, handleImageClick) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const deleteButton = cardElement.querySelector("#delete-btn");
   const cardPhoto = cardElement.querySelector(".card__image");
@@ -24,19 +23,11 @@ export function createCard(item, deleteHandler) {
   deleteButton.addEventListener("click", () => deleteHandler(cardElement));
 
   heartIcon.addEventListener("click", () => {
-    heartToggler();
+    heartHandler(heartIcon);
   });
 
-  function heartToggler() {
-    heartIcon.classList.toggle("card__heart_active");
-  }
-
   cardPhoto.addEventListener("click", () => {
-    photo.src = item.link;
-    photo.alt = item.name;
-    photoText.textContent = item.name;
-
-    openPopup(popupPhoto);
+    handleImageClick(item.link, item.name);
   });
 
   return cardElement;

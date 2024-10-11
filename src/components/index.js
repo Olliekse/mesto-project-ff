@@ -5,54 +5,73 @@ import { closePopup } from "./modal.js";
 import { renderCard } from "./card.js";
 import { deleteCard } from "./card.js";
 import { initialCards } from "./cards.js";
-
-const nameInput = document.getElementById("name");
-const jobInput = document.getElementById("job");
-const newName = document.querySelector(".profile__name");
-const newJob = document.querySelector(".profile__job");
-const inputUrl = document.getElementById("pic-link");
-const inputName = document.getElementById("place-name");
-const popupProfile = document.querySelector(".popup_type_profile");
-const popupAdd = document.querySelector(".popup_type_card");
-export const popupPhoto = document.querySelector(".popup_type_photo");
-export const cardTemplate = document.getElementById("card-template").content;
-export const photoText = document.querySelector(".popup__photo-text");
-export const photo = document.querySelector("#photo");
-export const cardsContainer = document.querySelector(".cards");
+import { heartToggler } from "./card.js";
+import { nameInput } from "./constants.js";
+import { jobInput } from "./constants.js";
+import { newName } from "./constants.js";
+import { newJob } from "./constants.js";
+import { inputUrl } from "./constants.js";
+import { inputName } from "./constants.js";
+import { popupProfile } from "./constants.js";
+import { popupAdd } from "./constants.js";
+import { popupPhoto } from "./constants.js";
+import { photoText } from "./constants.js";
+import { photo } from "./constants.js";
+import { editBtnBox } from "./constants.js";
 
 renderInitialCards();
 
 function renderInitialCards() {
-  initialCards.forEach((item) => renderCard(createCard(item, deleteCard)));
+  initialCards.forEach((item) =>
+    renderCard(createCard(item, deleteCard, heartToggler, handleImageClick))
+  );
 }
 
-document
-  .querySelector(".profile__edit-btn-box")
-  .addEventListener("click", () => {
-    const name = newName.textContent;
-    const job = newJob.textContent;
+function handleImageClick(imageLink, imageName) {
+  photo.src = imageLink;
+  photo.alt = imageName;
+  photoText.textContent = imageName;
+  openPopup(popupPhoto);
+}
 
-    nameInput.value = name;
-    jobInput.value = job;
+function handleEditProfileClick() {
+  const name = newName.textContent;
+  const job = newJob.textContent;
 
-    openPopup(popupProfile);
+  nameInput.value = name;
+  jobInput.value = job;
+
+  openPopup(popupProfile);
+}
+
+editBtnBox.addEventListener("click", handleEditProfileClick);
+
+const popups = document.querySelectorAll(".popup");
+popups.forEach((popup) => {
+  popup.addEventListener("click", (evt) => {
+    if (
+      evt.target === evt.currentTarget ||
+      evt.target.classList.contains("popup__close")
+    )
+      closePopup(popup);
   });
-
-document.querySelector(".popup__close").addEventListener("click", () => {
-  closePopup(popupProfile);
 });
+
+// popupProfile.querySelector(".popup__close").addEventListener("click", () => {
+//   closePopup(popupProfile);
+// });
 
 document.querySelector(".profile__add-btn").addEventListener("click", () => {
   openPopup(popupAdd);
 });
 
-document.getElementById("popup-close").addEventListener("click", () => {
-  closePopup(popupAdd);
-});
+// popupAdd.querySelector(".popup-close").addEventListener("click", () => {
+//   closePopup(popupAdd);
+// });
 
-document.getElementById("popup-photo-close").addEventListener("click", () => {
-  closePopup(popupPhoto);
-});
+// popupPhoto.querySelector(".popup-photo-close").addEventListener("click", () => {
+//   closePopup(popupPhoto);
+// });
 
 document
   .querySelector('[name="profile-form"]')
@@ -82,10 +101,9 @@ function handleAddCardFormSubmit(evt) {
     link: url,
   };
 
-  renderCard(createCard(cardInfo, deleteCard));
+  renderCard(createCard(cardInfo, deleteCard, heartToggler, handleImageClick));
 
-  inputUrl.value = "";
-  inputName.value = "";
+  evt.target.reset();
 
   closePopup(popupAdd);
 }

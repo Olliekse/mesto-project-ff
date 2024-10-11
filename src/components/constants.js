@@ -1,0 +1,14 @@
+export const nameInput = document.getElementById("name");
+export const jobInput = document.getElementById("job");
+export const editBtnBox = document.querySelector(".profile__edit-btn-box")
+export const newName = document.querySelector(".profile__name");
+export const newJob = document.querySelector(".profile__job");
+export const inputUrl = document.getElementById("pic-link");
+export const inputName = document.getElementById("place-name");
+export const popupProfile = document.querySelector(".popup_type_profile");
+export const popupAdd = document.querySelector(".popup_type_card");
+export const popupPhoto = document.querySelector(".popup_type_photo");
+export const cardTemplate = document.getElementById("card-template").content;
+export const photoText = document.querySelector(".popup__photo-text");
+export const photo = document.querySelector("#photo");
+export const cardsContainer = document.querySelector(".cards");
