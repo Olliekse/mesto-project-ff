@@ -18,6 +18,12 @@ import { popupPhoto } from "./constants.js";
 import { photoText } from "./constants.js";
 import { photo } from "./constants.js";
 import { editBtnBox } from "./constants.js";
+import { formElement } from "./constants.js";
+import { inputElement } from "./constants.js";
+import { hasInvalidInput } from "./validation.js";
+import { checkInputValidity } from "./validation.js";
+import { enableValidation } from "./validation.js";
+import { validationConfig } from "./validation.js";
 
 renderInitialCards();
 
@@ -41,6 +47,7 @@ function handleEditProfileClick() {
   nameInput.value = name;
   jobInput.value = job;
 
+  clearValidation(popupProfile, validationConfig);
   openPopup(popupProfile);
 }
 
@@ -57,21 +64,10 @@ popups.forEach((popup) => {
   });
 });
 
-// popupProfile.querySelector(".popup__close").addEventListener("click", () => {
-//   closePopup(popupProfile);
-// });
-
 document.querySelector(".profile__add-btn").addEventListener("click", () => {
+  clearValidation(popupAdd, validationConfig);
   openPopup(popupAdd);
 });
-
-// popupAdd.querySelector(".popup-close").addEventListener("click", () => {
-//   closePopup(popupAdd);
-// });
-
-// popupPhoto.querySelector(".popup-photo-close").addEventListener("click", () => {
-//   closePopup(popupPhoto);
-// });
 
 document
   .querySelector('[name="profile-form"]')
@@ -107,3 +103,63 @@ function handleAddCardFormSubmit(evt) {
 
   closePopup(popupAdd);
 }
+
+export const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
+  const errorElement = formElement.querySelector(
+    `.${inputElement.id}-input-error`
+  );
+
+  errorElement.classList.add(validationConfig.errorClass);
+  inputElement.classList.add(validationConfig.inputErrorClass);
+  errorElement.textContent = errorMessage;
+};
+
+export const hideInputError = (formElement, inputElement, validationConfig) => {
+  const errorElement = formElement.querySelector(
+    `.${inputElement.id}-input-error`
+  );
+  errorElement.classList.remove(validationConfig.errorClass);
+  inputElement.classList.remove(validationConfig.inputErrorClass);
+  errorElement.textContent = "";
+};
+
+export const toggleButtonState = (inputList, buttonElement, validationConfig) => {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = true;
+  } else {
+    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = false;
+  }
+};
+
+const clearValidation = (formElement, validationConfig) => {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
+
+  inputList.forEach((inputElement) => {
+    hideInputError(formElement, inputElement, validationConfig);
+  });
+
+  toggleButtonState(inputList, buttonElement, validationConfig);
+};
+
+export const setEventListeners = (formElement, validationConfig) => {
+  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+
+  toggleButtonState(inputList, buttonElement, validationConfig);
+
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener("input", () => {
+      checkInputValidity(formElement, inputElement, validationConfig);
+      toggleButtonState(inputList, buttonElement, validationConfig);
+    });
+  });
+};
+
+enableValidation(validationConfig);

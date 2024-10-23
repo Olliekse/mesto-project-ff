@@ -1,3 +1,5 @@
+import { validationConfig } from "./validation";
+
 function onPopupEscPress(evt) {
   if (evt.key === "Escape") {
     const openedPopup = document.querySelector(".popup_opened");
@@ -11,6 +13,18 @@ export function openPopup(element) {
 }
 
 export function closePopup(element) {
+  const inputFields = Array.from(element.querySelectorAll(".popup__input"));
+  const inputErrors = Array.from(
+    element.querySelectorAll(".popup__input-error")
+  );
+
   element.classList.remove("popup_opened");
   document.removeEventListener("keydown", onPopupEscPress);
+
+  inputFields.forEach((field) => {
+    field.classList.remove(validationConfig.inputErrorClass);
+  });
+  inputErrors.forEach((error) => {
+    error.classList.remove(validationConfig.errorClass);
+  });
 }

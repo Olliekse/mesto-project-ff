@@ -12,3 +12,5 @@ export const cardTemplate = document.getElementById("card-template").content;
 export const photoText = document.querySelector(".popup__photo-text");
 export const photo = document.querySelector("#photo");
 export const cardsContainer = document.querySelector(".cards");
+export const formElement = document.querySelector(".popup__form");
+export const inputElement = document.querySelector(".popup__input");
