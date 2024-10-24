@@ -24,6 +24,9 @@ import { hasInvalidInput } from "./validation.js";
 import { checkInputValidity } from "./validation.js";
 import { enableValidation } from "./validation.js";
 import { validationConfig } from "./validation.js";
+import { profileAvatar } from "./constants.js";
+import { popupDelete } from "./constants.js";
+import { popupAvatar } from "./constants.js";
 
 renderInitialCards();
 
@@ -161,5 +164,11 @@ export const setEventListeners = (formElement, validationConfig) => {
     });
   });
 };
+
+profileAvatar.addEventListener("click", () => {
+  clearValidation(popupAvatar, validationConfig);
+  openPopup(popupAvatar);
+});
+
 
 enableValidation(validationConfig);
