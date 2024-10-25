@@ -13,22 +13,18 @@
     <main class="content">
       <section class="profile">
         <div class="profile__photo-wrapper">
-          <img
-            class="profile__photo"
-            src="<%=require('./images/image.jpg')%>"
-            alt="фото профиля "
-          />
+          <img class="profile__photo" src="" alt="фото профиля" />
         </div>
         <div class="profile__info">
           <div class="profile__title">
-            <h1 class="profile__name">Жак-Ив Кусто</h1>
+            <h1 class="profile__name"></h1>
             <button
               type="button"
               class="profile__edit-btn-box"
               aria-label="кнопка редактирования"
             ></button>
           </div>
-          <p class="profile__job">Исследователь океана</p>
+          <p class="profile__job"></p>
         </div>
 
         <button
@@ -175,7 +171,7 @@
           <input
             type="url"
             placeholder="Введите ссылка на картину"
-            class="popup__input"
+            class="popup__input popup__input_type_avatar"
             id="avatar-link"
             name="avatar-link"
             required
@@ -218,7 +214,6 @@
     </template>
     <script type="text/javascript" src="./components/api.js"></script>
     <script type="text/javascript" src="./components/constants.js"></script>
-    <script type="text/javascript" src="./components/cards.js"></script>
     <script type="text/javascript" src="./components/card.js"></script>
     <script type="text/javascript" src="./components/index.js"></script>
     <script type="text/javascript" src="./components/modal.js"></script>

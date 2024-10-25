@@ -4,7 +4,6 @@ import { openPopup } from "./modal.js";
 import { closePopup } from "./modal.js";
 import { renderCard } from "./card.js";
 import { deleteCard } from "./card.js";
-import { initialCards } from "./cards.js";
 import { heartToggler } from "./card.js";
 import { nameInput } from "./constants.js";
 import { jobInput } from "./constants.js";
@@ -24,17 +23,52 @@ import { hasInvalidInput } from "./validation.js";
 import { checkInputValidity } from "./validation.js";
 import { enableValidation } from "./validation.js";
 import { validationConfig } from "./validation.js";
+import { profileAvatarWrapper } from "./constants.js";
 import { profileAvatar } from "./constants.js";
+import { avatarLinkInput } from "./constants.js";
 import { popupDelete } from "./constants.js";
 import { popupAvatar } from "./constants.js";
+import {
+  getInitialCardsApi,
+  setInitialCardsApi,
+  getUserInfoApi,
+  editUserInfoApi,
+  addCardApi,
+  deleteCardApi,
+  changeLikeCardStatusApi,
+  editAvatarApi,
+} from "./api.js";
 
-renderInitialCards();
+getInitialCardsApi()
+  .then((data) => {
+    console.log(`Received data from server: ${data}`);
 
-function renderInitialCards() {
-  initialCards.forEach((item) =>
-    renderCard(createCard(item, deleteCard, heartToggler, handleImageClick))
-  );
-}
+    data.forEach((item) => {
+      const cardInfo = {
+        name: item.name,
+        link: item.link,
+        id: item._id,
+      };
+      renderCard(
+        createCard(cardInfo, deleteCard, heartToggler, handleImageClick)
+      );
+    });
+  })
+  .catch((err) => {
+    console.log(`Error retrieving data from server: ${err}`);
+  });
+
+getUserInfoApi()
+  .then((userInfo) => {
+    console.log(`Received user info from server: ${userInfo}`);
+
+    newName.textContent = userInfo.name;
+    newJob.textContent = userInfo.about;
+    profileAvatar.src = userInfo.avatar;
+  })
+  .catch((err) => {
+    console.log(`Error retrieving user info: ${err}`);
+  });
 
 function handleImageClick(imageLink, imageName) {
   photo.src = imageLink;
@@ -80,14 +114,48 @@ document
   .querySelector('[name="add-form"]')
   .addEventListener("submit", handleAddCardFormSubmit);
 
-function handleProfileFormSubmit(evt) {
-  evt.preventDefault();
+  document
+  .querySelector('[name="avatar-form"]')
+  .addEventListener("submit", handleAvatarFormSubmit);
 
-  newName.textContent = nameInput.value;
-  newJob.textContent = jobInput.value;
+  function handleAvatarFormSubmit(evt) {
+    evt.preventDefault();
+  
+    const avatarLink = avatarLinkInput.value;
+    profileAvatar.src = avatarLink;
+  
+    editAvatarApi(avatarLink)
+      .then((data) => {
+        console.log(`Avatar updated: ${data}`);
+        profileAvatar.src = data.avatar;
+      })
+      .catch((err) => {
+        console.error(`Error updating avatar: ${err}`);
+      })
+      .finally(() => {
+        closePopup(popupAvatar);
+      });
+  }
 
-  closePopup(popupProfile);
-}
+  function handleProfileFormSubmit(evt) {
+    evt.preventDefault();
+  
+    const name = nameInput.value;
+    const job = jobInput.value;
+  
+    editUserInfoApi(name, job)
+      .then((data) => {
+        console.log(`User info updated: ${data}`);
+        newName.textContent = data.name;
+        newJob.textContent = data.about;
+      })
+      .catch((err) => {
+        console.error(`Error updating user info: ${err}`);
+      })
+      .finally(() => {
+        closePopup(popupProfile);
+      });
+  }
 
 function handleAddCardFormSubmit(evt) {
   evt.preventDefault();
@@ -100,14 +168,28 @@ function handleAddCardFormSubmit(evt) {
     link: url,
   };
 
-  renderCard(createCard(cardInfo, deleteCard, heartToggler, handleImageClick));
+  addCardApi(cardInfo.name, cardInfo.link)
+    .then((data) => {
+      console.log(`Card added to server: ${data}`);
+      renderCard(
+        createCard(cardInfo, deleteCard, heartToggler, handleImageClick)
+      );
+    })
+    .catch((err) => {
+      console.error(`Error adding card: ${err}`);
+    });
 
   evt.target.reset();
 
   closePopup(popupAdd);
 }
 
-export const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
+export const showInputError = (
+  formElement,
+  inputElement,
+  errorMessage,
+  validationConfig
+) => {
   const errorElement = formElement.querySelector(
     `.${inputElement.id}-input-error`
   );
@@ -126,7 +208,11 @@ export const hideInputError = (formElement, inputElement, validationConfig) => {
   errorElement.textContent = "";
 };
 
-export const toggleButtonState = (inputList, buttonElement, validationConfig) => {
+export const toggleButtonState = (
+  inputList,
+  buttonElement,
+  validationConfig
+) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.classList.add(validationConfig.inactiveButtonClass);
     buttonElement.disabled = true;
@@ -152,8 +238,12 @@ const clearValidation = (formElement, validationConfig) => {
 };
 
 export const setEventListeners = (formElement, validationConfig) => {
-  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
 
   toggleButtonState(inputList, buttonElement, validationConfig);
 
@@ -165,10 +255,9 @@ export const setEventListeners = (formElement, validationConfig) => {
   });
 };
 
-profileAvatar.addEventListener("click", () => {
+profileAvatarWrapper.addEventListener("click", () => {
   clearValidation(popupAvatar, validationConfig);
   openPopup(popupAvatar);
 });
-
 
 enableValidation(validationConfig);
