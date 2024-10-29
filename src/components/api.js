@@ -1,6 +1,6 @@
 console.log("Fetching data...");
 
-const config = {
+export const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-25",
   headers: {
     authorization: "bf321f60-bcd3-46d4-bcab-24d55df9bc76",
@@ -19,7 +19,6 @@ export const getInitialCardsApi = () => {
       return Promise.reject(`Error: ${res.status}`);
     })
     .then((data) => {
-      console.log(data);
       return data;
     })
     .catch((err) => {
@@ -84,6 +83,7 @@ export const addCardApi = (name, link) => {
       return Promise.reject(`Error: ${res.status}`);
     })
     .then((data) => {
+      data.likes = [];
       return data;
     })
     .catch((err) => {
@@ -110,9 +110,12 @@ export const deleteCardApi = (id) => {
     });
 };
 
-export const changeLikeCardStatusApi = (id, isLiked) => {
-  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
-    method: isLiked ? "DELETE" : "PUT",
+export const changeLikeCardStatusApi = (cardId, isLiked) => {
+  const url = `${config.baseUrl}/cards/likes/${cardId}`;
+  const method = isLiked ? "DELETE" : "PUT";
+
+  return fetch(url, {
+    method: method,
     headers: config.headers,
   })
     .then((res) => {
@@ -125,7 +128,7 @@ export const changeLikeCardStatusApi = (id, isLiked) => {
       return data;
     })
     .catch((err) => {
-      console.log(`Error: ${err}`);
+      console.log(`Error updating like status: ${err}`);
     });
 };
 

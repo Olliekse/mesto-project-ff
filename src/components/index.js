@@ -17,8 +17,6 @@ import { popupPhoto } from "./constants.js";
 import { photoText } from "./constants.js";
 import { photo } from "./constants.js";
 import { editBtnBox } from "./constants.js";
-import { formElement } from "./constants.js";
-import { inputElement } from "./constants.js";
 import { hasInvalidInput } from "./validation.js";
 import { checkInputValidity } from "./validation.js";
 import { enableValidation } from "./validation.js";
@@ -26,23 +24,17 @@ import { validationConfig } from "./validation.js";
 import { profileAvatarWrapper } from "./constants.js";
 import { profileAvatar } from "./constants.js";
 import { avatarLinkInput } from "./constants.js";
-import { popupDelete } from "./constants.js";
 import { popupAvatar } from "./constants.js";
 import {
   getInitialCardsApi,
-  setInitialCardsApi,
   getUserInfoApi,
   editUserInfoApi,
   addCardApi,
-  deleteCardApi,
-  changeLikeCardStatusApi,
   editAvatarApi,
 } from "./api.js";
 
 getInitialCardsApi()
   .then((data) => {
-    console.log(`Received data from server: ${data}`);
-
     data.forEach((item) => {
       const cardInfo = {
         name: item.name,
@@ -114,54 +106,65 @@ document
   .querySelector('[name="add-form"]')
   .addEventListener("submit", handleAddCardFormSubmit);
 
-  document
+document
   .querySelector('[name="avatar-form"]')
   .addEventListener("submit", handleAvatarFormSubmit);
 
-  function handleAvatarFormSubmit(evt) {
-    evt.preventDefault();
-  
-    const avatarLink = avatarLinkInput.value;
-    profileAvatar.src = avatarLink;
-  
-    editAvatarApi(avatarLink)
-      .then((data) => {
-        console.log(`Avatar updated: ${data}`);
-        profileAvatar.src = data.avatar;
-      })
-      .catch((err) => {
-        console.error(`Error updating avatar: ${err}`);
-      })
-      .finally(() => {
-        closePopup(popupAvatar);
-      });
-  }
+function handleAvatarFormSubmit(evt) {
+  evt.preventDefault();
 
-  function handleProfileFormSubmit(evt) {
-    evt.preventDefault();
-  
-    const name = nameInput.value;
-    const job = jobInput.value;
-  
-    editUserInfoApi(name, job)
-      .then((data) => {
-        console.log(`User info updated: ${data}`);
-        newName.textContent = data.name;
-        newJob.textContent = data.about;
-      })
-      .catch((err) => {
-        console.error(`Error updating user info: ${err}`);
-      })
-      .finally(() => {
-        closePopup(popupProfile);
+  const avatarLink = avatarLinkInput.value;
+  profileAvatar.src = avatarLink;
+  const submitButton = evt.target.querySelector(".popup__btn");
+  submitButton.textContent = "Сохранение...";
+
+  editAvatarApi(avatarLink)
+    .then((data) => {
+      console.log(`Avatar updated: ${data}`);
+      profileAvatar.src = data.avatar;
+    })
+    .catch((err) => {
+      console.error(`Error updating avatar: ${err}`);
+      profileAvatar.src = previousAvatarSrc;
+    })
+    .finally(() => {
+      closePopup(popupAvatar, () => {
+        submitButton.textContent = "Сохранить";
       });
-  }
+    });
+}
+
+function handleProfileFormSubmit(evt) {
+  evt.preventDefault();
+
+  const name = nameInput.value;
+  const job = jobInput.value;
+  const submitButton = evt.target.querySelector(".popup__btn");
+  submitButton.textContent = "Сохранение...";
+
+  editUserInfoApi(name, job)
+    .then((data) => {
+      console.log(`User info updated: ${data}`);
+      newName.textContent = data.name;
+      newJob.textContent = data.about;
+    })
+    .catch((err) => {
+      console.error(`Error updating user info: ${err}`);
+    })
+    .finally(() => {
+      closePopup(popupProfile, () => {
+        submitButton.textContent = "Сохранить";
+      });
+    });
+}
 
 function handleAddCardFormSubmit(evt) {
   evt.preventDefault();
 
   const url = inputUrl.value;
   const name = inputName.value;
+  const submitButton = popupAdd.querySelector(".popup__btn");
+  submitButton.textContent = "Создание...";
 
   const cardInfo = {
     name: name,
@@ -170,18 +173,48 @@ function handleAddCardFormSubmit(evt) {
 
   addCardApi(cardInfo.name, cardInfo.link)
     .then((data) => {
-      console.log(`Card added to server: ${data}`);
-      renderCard(
-        createCard(cardInfo, deleteCard, heartToggler, handleImageClick)
-      );
+      if (data) {
+        const cardInfo = {
+          name: data.name,
+          link: data.link,
+          id: data._id,
+          likes: data.likes,
+        };
+        const cardElement = createCard(
+          cardInfo,
+          deleteCard,
+          heartToggler,
+          handleImageClick
+        );
+        renderCard(cardElement);
+
+        const deleteButton = cardElement.querySelector("#delete-btn");
+        getUserInfoApi()
+          .then((userInfo) => {
+            if (userInfo._id === data.owner._id) {
+              deleteButton.style.display = "block";
+            } else {
+              deleteButton.style.display = "none";
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        console.error("Error adding card: No data returned");
+      }
     })
     .catch((err) => {
       console.error(`Error adding card: ${err}`);
+    })
+    .finally(() => {
+      closePopup(popupAdd, () => {
+        const submitButton = popupAdd.querySelector(".popup__btn");
+        submitButton.textContent = "Создать";
+      });
     });
 
   evt.target.reset();
-
-  closePopup(popupAdd);
 }
 
 export const showInputError = (

@@ -12,7 +12,7 @@ export function openPopup(element) {
   document.addEventListener("keydown", onPopupEscPress);
 }
 
-export function closePopup(element) {
+export function closePopup(element, callback) {
   const inputFields = Array.from(element.querySelectorAll(".popup__input"));
   const inputErrors = Array.from(
     element.querySelectorAll(".popup__input-error")
@@ -27,4 +27,8 @@ export function closePopup(element) {
   inputErrors.forEach((error) => {
     error.classList.remove(validationConfig.errorClass);
   });
+
+  if (callback) {
+    element.addEventListener("transitionend", callback, { once: true });
+  }
 }

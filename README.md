@@ -13,9 +13,9 @@
 
 ## Introduction
 
-This project is a web-based application that allows cards featuring text and images to be added and deleted. The application is built using HTML, CSS, and JavaScript, serving as a practical demonstration of frontend development techniques.
+This project is a web-based application that allows cards featuring text and images to be added and deleted while being synced with a server. In addition, the forms include validation and the coresponding error messages. The application is built using HTML, CSS, and JavaScript, serving as a practical demonstration of frontend development techniques.
 
-Этот проект представляет собой веб-приложение, которое позволяет добавлять и удалять карточки с текстом и изображениями. Приложение создано с использованием HTML, CSS и JavaScript и служит практической демонстрацией методов разработки интерфейса.
+Этот проект представляет собой веб-приложение, которое позволяет добавлять и удалять карточки с текстом и изображениями, синхронизируясь с сервером. Кроме того, формы содержат подтверждение и соответствующие сообщения об ошибках. Приложение создано с использованием HTML, CSS и JavaScript и служит практической демонстрацией методов разработки интерфейса.
 
 ## Features
 
@@ -26,6 +26,7 @@ This project is a web-based application that allows cards featuring text and ima
 - A maximum resolution of 1280px, a minimum of 320px and minor breakpoints in-between;  
 - Hover and popup window effects;
 - JavaScript functions, loops, variable declarations and listeners.
+- API for card data retrieval and form data submission.
 
 Изображения, шрифты и гибкие макеты;
 - Файловая структура в соответствии с методологией BEM;
@@ -34,6 +35,7 @@ This project is a web-based application that allows cards featuring text and ima
 - Максимальное разрешение 1280 пикселей, минимальное - 320 пикселей, а также небольшие промежуточные точки останова;  
 - Эффекты наведения курсора и всплывающего окна;
 - Функции JavaScript, циклы, объявления переменных и прослушиватели.
+- API для поиска карточных данных и отправки данных в форму.
 
 ## Technologies Used
 
