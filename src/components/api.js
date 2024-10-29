@@ -1,5 +1,3 @@
-console.log("Fetching data...");
-
 export const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-25",
   headers: {

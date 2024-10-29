@@ -33,9 +33,9 @@ import {
   editAvatarApi,
 } from "./api.js";
 
-getInitialCardsApi()
-  .then((data) => {
-    data.forEach((item) => {
+Promise.all([getInitialCardsApi(), getUserInfoApi()])
+  .then(([cards, userInfo]) => {
+    cards.forEach((item) => {
       const cardInfo = {
         name: item.name,
         link: item.link,
@@ -45,21 +45,13 @@ getInitialCardsApi()
         createCard(cardInfo, deleteCard, heartToggler, handleImageClick)
       );
     });
-  })
-  .catch((err) => {
-    console.log(`Error retrieving data from server: ${err}`);
-  });
-
-getUserInfoApi()
-  .then((userInfo) => {
-    console.log(`Received user info from server: ${userInfo}`);
 
     newName.textContent = userInfo.name;
     newJob.textContent = userInfo.about;
     profileAvatar.src = userInfo.avatar;
   })
   .catch((err) => {
-    console.log(`Error retrieving user info: ${err}`);
+    console.log(`Error retrieving data from server: ${err}`);
   });
 
 function handleImageClick(imageLink, imageName) {
