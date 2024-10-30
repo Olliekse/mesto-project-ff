@@ -1,6 +1,4 @@
-import { hideInputError } from "./index.js";
-import { showInputError } from "./index.js";
-import { setEventListeners } from "./index.js";
+import { hideInputError, showInputError, setEventListeners } from "./index.js";
 
 export const validationConfig = {
   formSelector: ".popup__form",

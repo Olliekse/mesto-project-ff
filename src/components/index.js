@@ -1,30 +1,35 @@
 import "../pages/index.css";
-import { createCard } from "./card.js";
-import { openPopup } from "./modal.js";
-import { closePopup } from "./modal.js";
-import { renderCard } from "./card.js";
-import { deleteCard } from "./card.js";
-import { heartToggler } from "./card.js";
-import { nameInput } from "./constants.js";
-import { jobInput } from "./constants.js";
-import { newName } from "./constants.js";
-import { newJob } from "./constants.js";
-import { inputUrl } from "./constants.js";
-import { inputName } from "./constants.js";
-import { popupProfile } from "./constants.js";
-import { popupAdd } from "./constants.js";
-import { popupPhoto } from "./constants.js";
-import { photoText } from "./constants.js";
-import { photo } from "./constants.js";
-import { editBtnBox } from "./constants.js";
-import { hasInvalidInput } from "./validation.js";
-import { checkInputValidity } from "./validation.js";
-import { enableValidation } from "./validation.js";
-import { validationConfig } from "./validation.js";
-import { profileAvatarWrapper } from "./constants.js";
-import { profileAvatar } from "./constants.js";
-import { avatarLinkInput } from "./constants.js";
-import { popupAvatar } from "./constants.js";
+
+import { createCard, renderCard, deleteCard, heartToggler } from "./card.js";
+
+import { openPopup, closePopup } from "./modal.js";
+
+import {
+  nameInput,
+  jobInput,
+  newName,
+  newJob,
+  inputUrl,
+  inputName,
+  popupProfile,
+  popupAdd,
+  popupPhoto,
+  photoText,
+  photo,
+  editBtnBox,
+  profileAvatarWrapper,
+  profileAvatar,
+  avatarLinkInput,
+  popupAvatar,
+} from "./constants.js";
+
+import {
+  hasInvalidInput,
+  checkInputValidity,
+  enableValidation,
+  validationConfig,
+} from "./validation.js";
+
 import {
   getInitialCardsApi,
   getUserInfoApi,
@@ -54,7 +59,7 @@ Promise.all([getInitialCardsApi(), getUserInfoApi()])
     console.log(`Error retrieving data from server: ${err}`);
   });
 
-function handleImageClick(imageLink, imageName) {
+export function handleImageClick(imageLink, imageName) {
   photo.src = imageLink;
   photo.alt = imageName;
   photoText.textContent = imageName;

@@ -6,148 +6,62 @@ export const config = {
   },
 };
 
-export const getInitialCardsApi = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    headers: config.headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+const handleResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Error: ${res.status}`);
 };
 
-export const getUserInfoApi = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+const handleError = (err) => {
+  console.error(err);
 };
+
+const fetchApi = (url, options = {}) => {
+  return fetch(url, { headers: config.headers, ...options })
+    .then(handleResponse)
+    .catch(handleError);
+};
+
+export const getInitialCardsApi = () => fetchApi(`${config.baseUrl}/cards`);
+
+export const getUserInfoApi = () => fetchApi(`${config.baseUrl}/users/me`);
 
 export const editUserInfoApi = (name, about) => {
-  return fetch(`${config.baseUrl}/users/me`, {
+  return fetchApi(`${config.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      about: about,
-    }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+    body: JSON.stringify({ name, about }),
+  });
 };
 
 export const addCardApi = (name, link) => {
-  return fetch(`${config.baseUrl}/cards`, {
+  return fetchApi(`${config.baseUrl}/cards`, {
     method: "POST",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      link: link,
-    }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      data.likes = [];
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+    body: JSON.stringify({ name, link }),
+  }).then((data) => {
+    data.likes = [];
+    return data;
+  });
 };
 
 export const deleteCardApi = (id) => {
-  return fetch(`${config.baseUrl}/cards/${id}`, {
+  return fetchApi(`${config.baseUrl}/cards/${id}`, {
     method: "DELETE",
-    headers: config.headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+  });
 };
 
 export const changeLikeCardStatusApi = (cardId, isLiked) => {
-  const url = `${config.baseUrl}/cards/likes/${cardId}`;
   const method = isLiked ? "DELETE" : "PUT";
-
-  return fetch(url, {
-    method: method,
-    headers: config.headers,
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error updating like status: ${err}`);
-    });
+  return fetchApi(`${config.baseUrl}/cards/likes/${cardId}`, { method }).catch(
+    (err) => {
+      console.error(`Error updating like status: ${err}`);
+    }
+  );
 };
 
 export const editAvatarApi = (avatar) => {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
+  return fetchApi(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      avatar: avatar,
-    }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Error: ${res.status}`);
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
-    });
+    body: JSON.stringify({ avatar }),
+  });
 };
