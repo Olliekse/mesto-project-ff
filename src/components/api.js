@@ -13,14 +13,10 @@ const handleResponse = (res) => {
   return Promise.reject(`Error: ${res.status}`);
 };
 
-const handleError = (err) => {
-  console.error(err);
-};
-
 const fetchApi = (url, options = {}) => {
-  return fetch(url, { headers: config.headers, ...options })
-    .then(handleResponse)
-    .catch(handleError);
+  return fetch(url, { headers: config.headers, ...options }).then(
+    handleResponse
+  );
 };
 
 export const getInitialCardsApi = () => fetchApi(`${config.baseUrl}/cards`);
@@ -52,11 +48,7 @@ export const deleteCardApi = (id) => {
 
 export const changeLikeCardStatusApi = (cardId, isLiked) => {
   const method = isLiked ? "DELETE" : "PUT";
-  return fetchApi(`${config.baseUrl}/cards/likes/${cardId}`, { method }).catch(
-    (err) => {
-      console.error(`Error updating like status: ${err}`);
-    }
-  );
+  return fetchApi(`${config.baseUrl}/cards/likes/${cardId}`, { method });
 };
 
 export const editAvatarApi = (avatar) => {

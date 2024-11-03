@@ -1,8 +1,7 @@
 import "../pages/index.css";
-
-import { createCard, renderCard, deleteCard, heartToggler } from "./card.js";
-
+import { createCard, renderCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
+import { handleSubmit } from "./utils.js";
 
 import {
   nameInput,
@@ -24,10 +23,9 @@ import {
 } from "./constants.js";
 
 import {
-  hasInvalidInput,
-  checkInputValidity,
   enableValidation,
   validationConfig,
+  clearValidation,
 } from "./validation.js";
 
 import {
@@ -38,22 +36,25 @@ import {
   editAvatarApi,
 } from "./api.js";
 
+let userId;
+
 Promise.all([getInitialCardsApi(), getUserInfoApi()])
   .then(([cards, userInfo]) => {
+    userId = userInfo._id;
+    newName.textContent = userInfo.name;
+    newJob.textContent = userInfo.about;
+    profileAvatar.src = userInfo.avatar;
+
     cards.forEach((item) => {
       const cardInfo = {
         name: item.name,
         link: item.link,
         id: item._id,
+        ownerId: item.owner._id,
+        likes: item.likes,
       };
-      renderCard(
-        createCard(cardInfo, deleteCard, heartToggler, handleImageClick)
-      );
+      renderCard(createCard({ cardInfo, userId }));
     });
-
-    newName.textContent = userInfo.name;
-    newJob.textContent = userInfo.about;
-    profileAvatar.src = userInfo.avatar;
   })
   .catch((err) => {
     console.log(`Error retrieving data from server: ${err}`);
@@ -95,199 +96,56 @@ document.querySelector(".profile__add-btn").addEventListener("click", () => {
   openPopup(popupAdd);
 });
 
-document
-  .querySelector('[name="profile-form"]')
-  .addEventListener("submit", handleProfileFormSubmit);
-
-document
-  .querySelector('[name="add-form"]')
-  .addEventListener("submit", handleAddCardFormSubmit);
-
-document
-  .querySelector('[name="avatar-form"]')
-  .addEventListener("submit", handleAvatarFormSubmit);
-
 function handleAvatarFormSubmit(evt) {
-  evt.preventDefault();
-
-  const avatarLink = avatarLinkInput.value;
-  profileAvatar.src = avatarLink;
-  const submitButton = evt.target.querySelector(".popup__btn");
-  submitButton.textContent = "Сохранение...";
-
-  editAvatarApi(avatarLink)
-    .then((data) => {
-      console.log(`Avatar updated: ${data}`);
+  function makeRequest() {
+    return editAvatarApi(avatarLinkInput.value).then((data) => {
       profileAvatar.src = data.avatar;
-    })
-    .catch((err) => {
-      console.error(`Error updating avatar: ${err}`);
-      profileAvatar.src = previousAvatarSrc;
-    })
-    .finally(() => {
-      closePopup(popupAvatar, () => {
-        submitButton.textContent = "Сохранить";
-      });
+      closePopup(popupAvatar);
     });
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function handleProfileFormSubmit(evt) {
-  evt.preventDefault();
-
-  const name = nameInput.value;
-  const job = jobInput.value;
-  const submitButton = evt.target.querySelector(".popup__btn");
-  submitButton.textContent = "Сохранение...";
-
-  editUserInfoApi(name, job)
-    .then((data) => {
-      console.log(`User info updated: ${data}`);
+  function makeRequest() {
+    return editUserInfoApi(nameInput.value, jobInput.value).then((data) => {
       newName.textContent = data.name;
       newJob.textContent = data.about;
-    })
-    .catch((err) => {
-      console.error(`Error updating user info: ${err}`);
-    })
-    .finally(() => {
-      closePopup(popupProfile, () => {
-        submitButton.textContent = "Сохранить";
-      });
+      closePopup(popupProfile);
     });
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function handleAddCardFormSubmit(evt) {
-  evt.preventDefault();
-
-  const url = inputUrl.value;
-  const name = inputName.value;
-  const submitButton = popupAdd.querySelector(".popup__btn");
-  submitButton.textContent = "Создание...";
-
-  const cardInfo = {
-    name: name,
-    link: url,
-  };
-
-  addCardApi(cardInfo.name, cardInfo.link)
-    .then((data) => {
-      if (data) {
-        const cardInfo = {
-          name: data.name,
-          link: data.link,
-          id: data._id,
-          likes: data.likes,
-        };
-        const cardElement = createCard(
-          cardInfo,
-          deleteCard,
-          heartToggler,
-          handleImageClick
-        );
-        renderCard(cardElement);
-
-        const deleteButton = cardElement.querySelector("#delete-btn");
-        getUserInfoApi()
-          .then((userInfo) => {
-            if (userInfo._id === data.owner._id) {
-              deleteButton.style.display = "block";
-            } else {
-              deleteButton.style.display = "none";
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      } else {
-        console.error("Error adding card: No data returned");
-      }
-    })
-    .catch((err) => {
-      console.error(`Error adding card: ${err}`);
-    })
-    .finally(() => {
-      closePopup(popupAdd, () => {
-        const submitButton = popupAdd.querySelector(".popup__btn");
-        submitButton.textContent = "Создать";
-      });
+  function makeRequest() {
+    return addCardApi(inputName.value, inputUrl.value).then((data) => {
+      const cardInfo = {
+        name: data.name,
+        link: data.link,
+        id: data._id,
+        ownerId: data.owner._id,
+        likes: data.likes,
+      };
+      renderCard(createCard({ cardInfo, userId }));
+      evt.target.reset();
+      closePopup(popupAdd);
     });
-
-  evt.target.reset();
-}
-
-export const showInputError = (
-  formElement,
-  inputElement,
-  errorMessage,
-  validationConfig
-) => {
-  const errorElement = formElement.querySelector(
-    `.${inputElement.id}-input-error`
-  );
-
-  errorElement.classList.add(validationConfig.errorClass);
-  inputElement.classList.add(validationConfig.inputErrorClass);
-  errorElement.textContent = errorMessage;
-};
-
-export const hideInputError = (formElement, inputElement, validationConfig) => {
-  const errorElement = formElement.querySelector(
-    `.${inputElement.id}-input-error`
-  );
-  errorElement.classList.remove(validationConfig.errorClass);
-  inputElement.classList.remove(validationConfig.inputErrorClass);
-  errorElement.textContent = "";
-};
-
-export const toggleButtonState = (
-  inputList,
-  buttonElement,
-  validationConfig
-) => {
-  if (hasInvalidInput(inputList)) {
-    buttonElement.classList.add(validationConfig.inactiveButtonClass);
-    buttonElement.disabled = true;
-  } else {
-    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
-    buttonElement.disabled = false;
   }
-};
-
-const clearValidation = (formElement, validationConfig) => {
-  const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
-  );
-  const buttonElement = formElement.querySelector(
-    validationConfig.submitButtonSelector
-  );
-
-  inputList.forEach((inputElement) => {
-    hideInputError(formElement, inputElement, validationConfig);
-  });
-
-  toggleButtonState(inputList, buttonElement, validationConfig);
-};
-
-export const setEventListeners = (formElement, validationConfig) => {
-  const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
-  );
-  const buttonElement = formElement.querySelector(
-    validationConfig.submitButtonSelector
-  );
-
-  toggleButtonState(inputList, buttonElement, validationConfig);
-
-  inputList.forEach((inputElement) => {
-    inputElement.addEventListener("input", () => {
-      checkInputValidity(formElement, inputElement, validationConfig);
-      toggleButtonState(inputList, buttonElement, validationConfig);
-    });
-  });
-};
+  handleSubmit(makeRequest, evt, "Создание...");
+}
 
 profileAvatarWrapper.addEventListener("click", () => {
   clearValidation(popupAvatar, validationConfig);
   openPopup(popupAvatar);
 });
+
+const profileForm = document.forms["profile-form"];
+const cardForm = document.forms["add-form"];
+const avatarForm = document.forms["avatar-form"];
+
+profileForm.addEventListener("submit", handleProfileFormSubmit);
+cardForm.addEventListener("submit", handleAddCardFormSubmit);
+avatarForm.addEventListener("submit", handleAvatarFormSubmit);
 
 enableValidation(validationConfig);
