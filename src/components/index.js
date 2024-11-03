@@ -38,6 +38,13 @@ import {
 
 let userId;
 
+function handleImageClick(imageLink, imageName) {
+  photo.src = imageLink;
+  photo.alt = imageName;
+  photoText.textContent = imageName;
+  openPopup(popupPhoto);
+}
+
 Promise.all([getInitialCardsApi(), getUserInfoApi()])
   .then(([cards, userInfo]) => {
     userId = userInfo._id;
@@ -53,19 +60,12 @@ Promise.all([getInitialCardsApi(), getUserInfoApi()])
         ownerId: item.owner._id,
         likes: item.likes,
       };
-      renderCard(createCard({ cardInfo, userId }));
+      renderCard(createCard({ cardInfo, userId, handleImageClick }));
     });
   })
   .catch((err) => {
     console.log(`Error retrieving data from server: ${err}`);
   });
-
-export function handleImageClick(imageLink, imageName) {
-  photo.src = imageLink;
-  photo.alt = imageName;
-  photoText.textContent = imageName;
-  openPopup(popupPhoto);
-}
 
 function handleEditProfileClick() {
   const name = newName.textContent;
@@ -127,8 +127,7 @@ function handleAddCardFormSubmit(evt) {
         ownerId: data.owner._id,
         likes: data.likes,
       };
-      renderCard(createCard({ cardInfo, userId }));
-      evt.target.reset();
+      renderCard(createCard({ cardInfo, userId, handleImageClick }));
       closePopup(popupAdd);
     });
   }

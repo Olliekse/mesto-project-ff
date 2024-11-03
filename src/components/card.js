@@ -1,5 +1,4 @@
 import { cardTemplate, cardsContainer, popupDelete } from "./constants.js";
-import { handleImageClick } from "./index.js";
 import { changeLikeCardStatusApi, deleteCardApi } from "./api.js";
 import { openPopup, closePopup } from "./modal.js";
 
@@ -17,8 +16,11 @@ function handleDeleteCardSubmit(cardId, cardElement) {
 
 export function deleteCard(cardElement) {
   const cardId = cardElement.dataset.id;
-
-  openPopup(popupDelete);
+  const oldHandlers = popupDelete._deleteHandlers || [];
+  oldHandlers.forEach((handler) => {
+    popupDelete.removeEventListener("submit", handler);
+  });
+  popupDelete._deleteHandlers = [];
 
   const handleDeleteSubmit = (evt) => {
     evt.preventDefault();
@@ -26,7 +28,10 @@ export function deleteCard(cardElement) {
     popupDelete.removeEventListener("submit", handleDeleteSubmit);
   };
 
+  popupDelete._deleteHandlers.push(handleDeleteSubmit);
   popupDelete.addEventListener("submit", handleDeleteSubmit);
+
+  openPopup(popupDelete);
 }
 
 export function heartToggler(heartIcon, cardId, isLiked) {
@@ -48,8 +53,9 @@ export function heartToggler(heartIcon, cardId, isLiked) {
 function setCardState(cardElement, cardData, userId) {
   const deleteButton = cardElement.querySelector("#delete-btn");
   const heartIcon = cardElement.querySelector("#heart-like");
-  const likeCountElement =
-    heartIcon.parentNode.querySelector(".card__like-count");
+  const likeCountElement = heartIcon
+    .closest(".card")
+    .querySelector(".card__like-count");
 
   likeCountElement.textContent = cardData.likes.length.toString();
 
@@ -64,7 +70,7 @@ function setCardState(cardElement, cardData, userId) {
 }
 
 function attachEventListeners(cardElement, config) {
-  const { cardInfo } = config;
+  const { cardInfo, handleImageClick } = config;
   const deleteButton = cardElement.querySelector("#delete-btn");
   const heartIcon = cardElement.querySelector("#heart-like");
   const cardPhoto = cardElement.querySelector(".card__image");
@@ -86,8 +92,7 @@ function attachEventListeners(cardElement, config) {
   });
 }
 
-export function createCard(config) {
-  const { cardInfo, userId } = config;
+export function createCard({ cardInfo, userId, handleImageClick }) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardPhoto = cardElement.querySelector(".card__image");
   const cardText = cardElement.querySelector(".card__text");
@@ -101,7 +106,7 @@ export function createCard(config) {
   cardPhoto.src = cardInfo.link;
 
   setCardState(cardElement, cardInfo, userId);
-  attachEventListeners(cardElement, config);
+  attachEventListeners(cardElement, { cardInfo, userId, handleImageClick });
 
   return cardElement;
 }
