@@ -62,3 +62,6 @@ Screenshots:
 ![screencapture-127-0-0-1-5500-2024-09-04-20_13_43-imageonline co-merged-min](https://github.com/user-attachments/assets/963c9b8f-7b5d-40a8-9f3a-264e799c5221)
 
 <img width="215" alt="Screenshot 2024-10-29 at 23 48 52" src="https://github.com/user-attachments/assets/c9e62805-654e-4c9f-a2e6-7f4e41808d49">
+
+![Mesto-2024-11-03-200641](https://github.com/user-attachments/assets/b3030de1-d099-44ca-99ac-d9001d959d26)
+
